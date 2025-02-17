@@ -2,6 +2,8 @@ import numpy as np
 from PIL import Image
 import os
 
+from binary_parser import *
+
 def collect_dirs(dir_path):
     files = []
     for file in os.listdir(dir_path):
@@ -17,14 +19,23 @@ def convert_binaries(files, out_dir):
             base_name = os.path.splitext(os.path.basename(file))[0]
             out_file_path = os.path.join(out_dir, f"{base_name}.png")
 
-            PILimage = Image.fromarray(bin_data)
+            sections, entropy_values = parse_binary_file(file)
+            #for start, end, section_type, entropy in sections:
+            #    print(f"Bytes {start}-{end}: {section_type} (Entropy: {entropy:.2f})")
+
+            PILimage = generate_visualization(bin_data, sections)
+
+            #PILimage = Image.fromarray(bin_data)
             PILimage.save(out_file_path)
 
-base_dir = '/bin'
-out_dir = './binary_images'
-os.makedirs(out_dir, exist_ok=True)
+def test_driver():
+    base_dir = '/bin'
+    out_dir = './binary_images'
+    os.makedirs(out_dir, exist_ok=True)
 
-files = collect_dirs(base_dir)
+    files = collect_dirs(base_dir)
 
-convert_binaries(files, out_dir)
+    convert_binaries(files, out_dir)
 
+if __name__ == '__main__':
+    test_driver()
